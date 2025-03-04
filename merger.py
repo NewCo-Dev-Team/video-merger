@@ -7,7 +7,7 @@ import subprocess
 import requests
 import pandas as pd
 from os import makedirs
-
+import traceback
 
 downloaded_videos_output_dir = "./downloaded-videos"
 normalized_videos_output_dir = "./normalized-videos"
@@ -53,7 +53,7 @@ class SynthesiaDownloader(VideoDownloader):
     def download(self, id, output_dir, result_name):
         url = f"https://api.synthesia.io/v2/videos/{id}"
         headers = {
-            "Authorization": "<API_KEY>",
+            "Authorization": "343f95b7d1c7b28613f90bb6038a9ff0",
             "accept": "application/json"
         }
         response = requests.get(url, headers=headers)
@@ -89,6 +89,7 @@ def download_videos(batch_name, videos_list):
 
   index = 1
   for video_url in videos_list:
+    print(video_url)
     if("https" in video_url):
         video_files.append(s3_downloader.execute(video_url, downloaded_videos_output_dir, f'{batch_name}-{index}.mp4'))
     else:
@@ -152,7 +153,8 @@ if __name__ == "__main__":
   for video_name, video_data in videos.items():
     try:
         download_videos(video_name, video_data["urls"])
-    except:
+    except Exception as e:
+        traceback.print_exc()
         print(f"❌ Could not process: {video_name}")
 
 
